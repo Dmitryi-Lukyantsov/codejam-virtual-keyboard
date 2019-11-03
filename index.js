@@ -69,16 +69,6 @@ class btnRowOne extends btn {
             keyboardRowPos1.append(div);
         }
     }
-
-    changeLang() {
-        keyboard.innerHTML = '';
-        let div = document.querySelector(`.${this.code}`);
-        div.classList.add('btn', this.code);
-        div.setAttribute('data-EnCharCode', this.EnCharCode);
-        div.setAttribute('data-RuCharCode', this.RuCharCode)
-        div.innerHTML = `${String.fromCharCode(this.RuCharCode)}`
-        keyboardRowPos1.append(div);
-    }
 };
 class btnRowTwo extends btn {
     constructor(code, EnCharCode, RuCharCode) {
@@ -240,17 +230,82 @@ const onKeyUp = (e) => {
     textarea.value += e.target.innerText;
 }
 
+// events space, tab, backspace, shift
 const onClick = (e) => {
     document.querySelectorAll(`.active`).forEach(el => el.classList.remove('active'));
     e.target.classList.add('active');
+
+    if(e.target.classList.contains('Space')) {
+       return textarea.value += ' ';
+    }
+
+    if(e.target.classList.contains('Tab')) {
+        event.preventDefault();
+        return textarea.value += '    ';
+    }
+
+    if (e.target.classList.contains('Backspace')) {
+        return textarea.value = textarea.value.slice(0, textarea.value.length - 1);
+    }
+
+    if (e.target.classList.contains('Ctrl') || e.target.classList.contains('Win') || 
+        e.target.classList.contains('Alt') || e.target.classList.contains('◀') ||
+        e.target.classList.contains('▼') || e.target.classList.contains('▶') ||
+        e.target.classList.contains('▲') ) {
+            return textarea.value
+    }
+
+    if(e.target.classList.contains('Shift') ) {
+
+        if(!upperCase) {
+            document.querySelectorAll('.btn').forEach(el => {
+                if(el.getAttribute('data-rucharcode')) {
+                    el.innerHTML = el.innerHTML.toLocaleUpperCase();
+                }
+            });
+            return upperCase = true;
+        };
+    }
+
+    if(e.target.classList.contains('CapsLock')) {
+
+        if(!pressCapsLock) {
+            document.querySelectorAll('.btn').forEach(el => {
+                if(el.getAttribute('data-rucharcode')) {
+                    el.innerHTML = el.innerHTML.toLocaleUpperCase();
+                }
+            });
+            return pressCapsLock = true;
+        };
+        if(pressCapsLock) {
+            document.querySelectorAll('.btn').forEach(el => {
+                if(el.getAttribute('data-rucharcode')) {
+                    el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+                }
+            });
+            return pressCapsLock = false;
+        }
+    }
+
     textarea.value += e.target.innerText;
+
+    if(upperCase) {
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        upperCase = false;
+    }
 }
 
 // language switching
 const onDuobleKey = (e) => {
     if(e.code == 'ShiftLeft') pressShift = true;
+
     if(e.code == 'AltLeft' && pressShift) {
         pressShift = false;
+
         if(!alterText) {
             document.querySelectorAll('.btn').forEach(el => {
                 if(el.getAttribute('data-rucharcode')) {
@@ -274,6 +329,7 @@ const onDuobleKey = (e) => {
 //  letter case events
 const onShift = (e) => {
     if(e.code != 'ShiftLeft') return;
+
     if(!upperCase) {
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
@@ -282,6 +338,7 @@ const onShift = (e) => {
         });
         return upperCase = true;
     };
+
     if(upperCase) {
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
@@ -295,7 +352,7 @@ const onShift = (e) => {
 //  letter case events
 const onClickShift = (e) => {
     if(e.code != 'ShiftLeft') return;
-    console,log(dsdsdsd)
+
     if(!upperCase) {
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
@@ -304,6 +361,7 @@ const onClickShift = (e) => {
         });
         return upperCase = true;
     };
+
     if(upperCase) {
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
