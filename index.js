@@ -271,7 +271,48 @@ const onDuobleKey = (e) => {
     }
 }
 
+//  letter case events
+const onShift = (e) => {
+    if(e.code != 'ShiftLeft') return;
+    if(!upperCase) {
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return upperCase = true;
+    };
+    if(upperCase) {
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return upperCase = false;
+    }
+}
 
+//  letter case events
+const onClickShift = (e) => {
+    if(e.code != 'ShiftLeft') return;
+    console,log(dsdsdsd)
+    if(!upperCase) {
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return upperCase = true;
+    };
+    if(upperCase) {
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return upperCase = false;
+    }
+}
 
 keyboard.addEventListener('click', onClick);
 document.addEventListener('keyup', onKeyUp);
