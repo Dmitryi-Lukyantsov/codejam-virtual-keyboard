@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   margin: 0;
   padding: 0;
@@ -6,36 +7,23 @@
 html,
 body {
   height: 100%;
-  background-color: #4d13aa;
+  background-color: white;
 }
 
 #root {
+  margin: 0 auto;
   width: 1000px;
   height: 500px;
-  background-color: #00a2b8;
+  background-color: white;
 }
 
 .textarea {
   width: 100%;
-  height: 100px;
+  height: 200px;
   border: 2px solid black;
 }
 
-.keyboard--row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-}
-
-.btn--row_one,
-.btn--row_two,
-.btn--row_three,
-.btn--row_four,
-.btn--row_five {
+.btn {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -45,30 +33,97 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 50px;
+  min-width: 50px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   height: 50px;
+  border-radius: 3px;
   background-color: black;
   color: white;
 }
 
-.btn--row_one:hover,
-.btn--row_two:hover,
-.btn--row_three:hover,
-.btn--row_four:hover,
-.btn--row_five:hover {
+.btn:hover {
   background-color: #383232;
 }
 
 .keyboard {
-  width: 100%;
-  height: 100%;
-  background-color: #d37272;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 80%;
+  height: 270px;
+  background-color: #c7b447;
+  margin: 0 auto;
 }
 
 .keyboard .keyboard--row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   width: 100%;
   height: 50px;
   background-color: #c7b447;
-  border: 2px solid black;
+}
+
+.upperCase {
+  text-transform: uppercase;
+}
+
+.power,
+.active {
+  background-color: #ee5f00;
+}
+
+.special--btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  min-width: 100px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: 50px;
+  border-radius: 3px;
+  background-color: black;
+  color: white;
+}
+
+.special--btn:hover {
+  background-color: #383232;
+}
+
+.◀,
+.▼,
+.▶,
+.▲ {
+  min-width: 50px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.Space {
+  width: 375px;
 }
 /*# sourceMappingURL=style.css.map */
