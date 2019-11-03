@@ -386,11 +386,10 @@ document.addEventListener('click', onClickShift)
 
 
 window.onload = () => {
-    console.log(1)
+
     const localAlterText = JSON.parse(localStorage.getItem('alterText'))
 
     if (localAlterText == true) {
-        console.log(document.querySelectorAll('.btn'))
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
                 el.innerHTML = `${String.fromCharCode(el.getAttribute('data-rucharcode'))}`
