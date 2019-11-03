@@ -43,6 +43,7 @@ let pressShift = false;
 let pressCapsLock = false;
 let alterText = false;
 let upperCase = false;
+
 class btn {
     constructor(code, EnCharCode, RuCharCode) {
         this.code = code;
@@ -304,6 +305,7 @@ const onDuobleKey = (e) => {
     if(e.code == 'ShiftLeft') pressShift = true;
 
     if(e.code == 'AltLeft' && pressShift) {
+        event.preventDefault();
         pressShift = false;
 
         if(!alterText) {
@@ -312,7 +314,9 @@ const onDuobleKey = (e) => {
                     el.innerHTML = `${String.fromCharCode(el.getAttribute('data-rucharcode'))}`
                 }
             });  
-           return alterText = true;
+            alterText = true;
+            localStorage.setItem('alterText', JSON.stringify(alterText));
+            return;
         };
 
         if(alterText) {
@@ -321,7 +325,9 @@ const onDuobleKey = (e) => {
                     el.innerHTML = `${String.fromCharCode(el.getAttribute('data-encharcode'))}`
                 }
             });
-            return alterText = false;
+            alterText = false;
+            localStorage.setItem('alterText', JSON.stringify(alterText));
+            return;
         };
     }
 }
@@ -377,3 +383,21 @@ document.addEventListener('keyup', onKeyUp);
 document.addEventListener('keydown', onDuobleKey)
 document.addEventListener('keydown', onShift)
 document.addEventListener('click', onClickShift)
+
+
+window.onload = () => {
+    console.log(1)
+    const localAlterText = JSON.parse(localStorage.getItem('alterText'))
+
+    if (localAlterText == true) {
+        console.log(document.querySelectorAll('.btn'))
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = `${String.fromCharCode(el.getAttribute('data-rucharcode'))}`
+            }
+        });  
+        alterText = true;
+        localStorage.setItem('alterText', JSON.stringify(alterText));
+        return;
+    }
+}
