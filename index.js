@@ -39,11 +39,6 @@ let keyboardRowPos5 = document.createElement('div');
     keyboard.append(keyboardRowPos5);
 
 
-let pressShift = false;
-let pressCapsLock = false;
-let alterText = false;
-let upperCase = false;
-
 class btn {
     constructor(code, EnCharCode, RuCharCode) {
         this.code = code;
@@ -56,7 +51,7 @@ class btnRowOne extends btn {
     constructor(code, EnCharCode, RuCharCode) {
         super(code, EnCharCode, RuCharCode);
 
-        if(EnCharCode == undefined) {
+        if(EnCharCode == undefined) {          
             let div = document.createElement('div');
             div.classList.add('special--btn', code);
             div.innerHTML = `${code}`
@@ -71,6 +66,7 @@ class btnRowOne extends btn {
         }
     }
 };
+
 class btnRowTwo extends btn {
     constructor(code, EnCharCode, RuCharCode) {
         super(code, EnCharCode, RuCharCode);
@@ -119,6 +115,13 @@ class btnRowFour extends btn {
         if(EnCharCode == undefined) {
             let div = document.createElement('div');
             div.classList.add('special--btn', code);
+
+            if(code === 'ShiftLeft' || code === 'ShiftRight') {
+                div.innerHTML = 'Shift'
+                keyboardRowPos4.append(div);
+                return;
+            }
+
             div.innerHTML = `${code}`
             keyboardRowPos4.append(div);
         } else {
@@ -139,6 +142,19 @@ class btnRowFive extends btn {
         if(EnCharCode == undefined) {
             let div = document.createElement('div');
             div.classList.add('btn', code,);
+
+            if(code === 'ControlLeft' || code === 'ControlRight') {
+                div.innerHTML = 'Ctrl'
+                keyboardRowPos5.append(div);
+                return;
+            }
+            
+            if(code == 'AltLeft' || code == 'AltRight') {
+                div.innerHTML = 'Alt'
+                keyboardRowPos5.append(div);
+                return;
+            }
+
             div.innerHTML = `${code}`
             keyboardRowPos5.append(div);
         } else {
@@ -151,8 +167,6 @@ class btnRowFive extends btn {
         }
     }
 };
-
-
 
 let backQuote = new btnRowOne('Backquote', 96, 1105),
     one = new btnRowOne('Digit1', 49, 33),
@@ -197,7 +211,7 @@ let capsColck = new btnRowThree ('CapsLock'),
     quote = new btnRowThree ('Quote', 39, 1101),
     enter = new btnRowThree ('Enter');
 
-let shiftLeft = new btnRowFour ('Shift'),
+let shiftLeft = new btnRowFour ('ShiftLeft'),
     z = new btnRowFour ('KeyZ', 122, 1103),
     x = new btnRowFour ('KeyX', 120, 1095),
     c = new btnRowFour ('KeyC', 99, 1089),
@@ -209,104 +223,260 @@ let shiftLeft = new btnRowFour ('Shift'),
     period  = new btnRowFour ('Period', 46, 1102),
     slash  = new btnRowFour ('Slash', 47, 46),
     arrowUp = new btnRowFour ('▲'),
-    shiftRight = new btnRowFour ('Shift');
+    shiftRight = new btnRowFour ('ShiftRight');
 
-let controlLeft  = new btnRowFive ('Ctrl'),
+let controlLeft  = new btnRowFive ('ControlLeft'),
     win = new btnRowFive ('Win',),
-    altLeft  = new btnRowFive ('Alt'),
+    altLeft  = new btnRowFive ('AltLeft'),
     space = new btnRowFive ('Space'),
-    altRight = new btnRowFive ('Alt'),
+    altRight = new btnRowFive ('AltRight'),
     arrowLeft = new btnRowFive ('◀'),
     arrowDown = new btnRowFive ('▼'),
     arrowRight = new btnRowFive ('▶');
-   controlRight = new btnRowFive ('Ctrl');
+    controlRight = new btnRowFive ('ControlRight');
+
+
+let pressShift = false;
+let pressCapsLock = false;
+let alterText = false;  
+let switchLanguage = false;
 
 root.prepend(textarea, keyboard);
 body.prepend(root);
 
-const onKeyUp = (e) => {
-    event.preventDefault();
-    document.querySelectorAll(`.active`).forEach(el => el.classList.remove('active'));
+// reset event default fisical keybord
+document.onkeydown = (e) => e.code ? false : true;
+
+// switching style key
+const styleKeyDown = (e) => {
+    if(e.code == 'ShiftLeft' || e.code == 'ShiftRight' || e.code == 'CapsLock') return;
     document.querySelector(`.keyboard .${e.code}`).classList.add('active');
-    textarea.value += e.target.innerText;
 }
 
-// events space, tab, backspace, shift
-const onClick = (e) => {
+// switching style key
+const styleKeyUp = (e) => {
+    if(e.code == 'ShiftLeft' || e.code == 'ShiftRight' || e.code == 'CapsLock') return;
     document.querySelectorAll(`.active`).forEach(el => el.classList.remove('active'));
+}
+
+// switching style mouse
+const styleMouseDown = (e) => {
+    if(e.target.classList.contains('ShiftLeft') || e.target.classList.contains('ShiftRight')) return;
+    if(!e.target.classList.contains('btn') && !e.target.classList.contains('special--btn')) return;
     e.target.classList.add('active');
+}
 
-    if(e.target.classList.contains('Space')) {
-       return textarea.value += ' ';
+// switching style mouse
+const styleMouseUp = (e) => {
+    if(e.target.classList.contains('ShiftLeft') || e.target.classList.contains('ShiftRight')) return;
+    document.querySelectorAll(`.active`).forEach(el => el.classList.remove('active'));
+}
+
+// add text in text area for key event;
+const innerTextAreaOnKeyDown = (e) => {
+
+    if(e.code != 'AltLeft') {
+       switchLanguage = false;
     }
 
-    if(e.target.classList.contains('Tab')) {
-        event.preventDefault();
-        return textarea.value += '    ';
+    if(e.code == 'Space') {
+       return textarea.value += '\u0020';
     }
 
-    if (e.target.classList.contains('Backspace')) {
+    if(e.code == 'Tab') {
+        return textarea.value += '\u0009';
+    }
+
+    if(e.code == 'Backspace') {
         return textarea.value = textarea.value.slice(0, textarea.value.length - 1);
     }
 
-    if (e.target.classList.contains('Ctrl') || e.target.classList.contains('Win') || 
-        e.target.classList.contains('Alt') || e.target.classList.contains('◀') ||
-        e.target.classList.contains('▼') || e.target.classList.contains('▶') ||
-        e.target.classList.contains('▲') ) {
-            return textarea.value
+    if(e.code == 'Enter') {
+        return textarea.value += '\r\n';
     }
 
-    if(e.target.classList.contains('Shift') ) {
-
-        if(!upperCase) {
-            document.querySelectorAll('.btn').forEach(el => {
-                if(el.getAttribute('data-rucharcode')) {
-                    el.innerHTML = el.innerHTML.toLocaleUpperCase();
-                }
-            });
-            return upperCase = true;
-        };
+    if (e.code == 'ControlRight' || e.code == 'ControlLeft' ||
+        e.code == 'Win' || e.code == 'AltRight' || e.code == 'ShiftLeft' || e.code == 'ShiftRight' ||
+        e.code == 'AltLeft' || e.code == '◀' || e.code == 'CapsLock' ||
+        e.code == '▼' || e.code == '▶' || e.code == '▲') {
+        return;
     }
 
-    if(e.target.classList.contains('CapsLock')) {
+    if(pressShift) {
+        textarea.value += e.key.toUpperCase();
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();
+            }
+        });
+        return pressShift = false;
+    }   
+    console.log(e.key)
+    return textarea.value += e.key;
+} 
 
-        if(!pressCapsLock) {
-            document.querySelectorAll('.btn').forEach(el => {
-                if(el.getAttribute('data-rucharcode')) {
-                    el.innerHTML = el.innerHTML.toLocaleUpperCase();
-                }
-            });
-            return pressCapsLock = true;
-        };
-        if(pressCapsLock) {
-            document.querySelectorAll('.btn').forEach(el => {
-                if(el.getAttribute('data-rucharcode')) {
-                    el.innerHTML = el.innerHTML.toLocaleLowerCase();;
-                }
-            });
-            return pressCapsLock = false;
-        }
+// add text in text area for mouse event;
+const innerTextAreaOnMouseDown = (e) => {
+    
+    if(!e.target.classList.contains('btn') && !e.target.classList.contains('special--btn')) return;
+    
+    if(e.target.classList.contains('Space')) {
+        return textarea.value += '\u0020';
     }
 
-    textarea.value += e.target.innerText;
+    if(e.target.classList.contains('Tab')) {
+        return textarea.value += '\u0009';
+    }
 
-    if(upperCase) {
+    if(e.target.classList.contains('Enter')) {
+        return textarea.value += '\r\n';
+    }
+
+    if(e.target.classList.contains('Backspace')) {
+        return textarea.value = textarea.value.slice(0, textarea.value.length - 1);
+    }
+
+    if (e.target.innerText == 'Ctrl' || e.target.innerText == 'Win' || 
+        e.target.innerText == 'Alt' || e.target.innerText == '◀' ||
+        e.target.innerText == '▼' || e.target.innerText == '▶' ||
+        e.target.innerText == '▲' || e.target.innerText == 'Shift' || 
+        e.target.innerText == 'CapsLock') {
+        return;
+    }
+
+    if(pressShift) {
+        textarea.value +=  e.target.innerText.toUpperCase();
         document.querySelectorAll('.btn').forEach(el => {
             if(el.getAttribute('data-rucharcode')) {
                 el.innerHTML = el.innerHTML.toLocaleLowerCase();;
             }
         });
-        upperCase = false;
+        return pressShift = false;
+    }
+    
+    return textarea.value += e.target.innerText;
+}
+
+// press shift switching case events key
+const onKeyDownShift = (e) => {
+
+    if(e.code != 'ShiftLeft' && e.code != 'ShiftRight') return;
+
+    if(!pressShift) {
+
+        if(pressCapsLock) {
+            document.querySelector(`.caps`).classList.remove('caps');
+            pressCapsLock = false;
+        }
+        
+        document.querySelector(`.keyboard .${e.code}`).classList.add('active');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return pressShift = true;
+    };
+
+    if(pressShift) {
+        document.querySelector(`.keyboard .${e.code}`).classList.remove('active');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return pressShift = false;
+    }
+}
+
+// press shift switching case events mouse
+const onMouseDownShift = (e) => {
+    if(!e.target.classList.contains('ShiftLeft') && !e.target.classList.contains('ShiftRight')) return;
+    
+    if(pressCapsLock) {
+        document.querySelector(`.caps`).classList.remove('caps');
+        pressCapsLock = false;
+    }
+
+    if(!pressShift) {
+        e.target.classList.add('active');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return pressShift = true;
+    };
+
+    if(pressShift) {
+        e.target.classList.remove('active');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return pressShift = false;
+    }
+}
+
+// press caps lock switching case events key
+const onKeyDownCaps = (e) => {
+
+    if(e.code != 'CapsLock') return;
+    
+    if(!pressCapsLock) {
+        pressShift = false;
+        document.querySelector(`.keyboard .${e.code}`).classList.add('caps');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return pressCapsLock = true;
+    }
+
+    if(pressCapsLock) {
+        document.querySelector(`.keyboard .${e.code}`).classList.remove('caps');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return pressCapsLock = false;
+    }
+}
+
+// press caps lock switching case events mouse
+const onMouseDownCaps = (e) => {
+    if(!e.target.classList.contains('CapsLock')) return;
+    
+    if(!pressCapsLock) {
+        e.target.classList.add('caps');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleUpperCase();
+            }
+        });
+        return pressCapsLock = true;
+    }
+
+    if(pressCapsLock) {
+        e.target.classList.remove('caps');
+        document.querySelectorAll('.btn').forEach(el => {
+            if(el.getAttribute('data-rucharcode')) {
+                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
+            }
+        });
+        return pressCapsLock = false;
     }
 }
 
 // language switching
 const onDuobleKey = (e) => {
-    if(e.code == 'ShiftLeft') pressShift = true;
+    if(e.code == 'ShiftLeft' || e.code == 'ShiftRight') switchLanguage = true;
 
-    if(e.code == 'AltLeft' && pressShift) {
-        event.preventDefault();
-        pressShift = false;
+    if(e.code == 'AltLeft' && switchLanguage) {
+        switchLanguage = false;
 
         if(!alterText) {
             document.querySelectorAll('.btn').forEach(el => {
@@ -332,58 +502,18 @@ const onDuobleKey = (e) => {
     }
 }
 
-//  letter case events
-const onShift = (e) => {
-    if(e.code != 'ShiftLeft') return;
+document.addEventListener('keydown', styleKeyDown);
+document.addEventListener('keydown', innerTextAreaOnKeyDown);
+document.addEventListener('keydown', onKeyDownShift);
+document.addEventListener('keydown', onKeyDownCaps);
+document.addEventListener('keydown', onDuobleKey);
+document.addEventListener('keyup', styleKeyUp);
 
-    if(!upperCase) {
-        document.querySelectorAll('.btn').forEach(el => {
-            if(el.getAttribute('data-rucharcode')) {
-                el.innerHTML = el.innerHTML.toLocaleUpperCase();
-            }
-        });
-        return upperCase = true;
-    };
-
-    if(upperCase) {
-        document.querySelectorAll('.btn').forEach(el => {
-            if(el.getAttribute('data-rucharcode')) {
-                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
-            }
-        });
-        return upperCase = false;
-    }
-}
-
-//  letter case events
-const onClickShift = (e) => {
-    if(e.code != 'ShiftLeft') return;
-
-    if(!upperCase) {
-        document.querySelectorAll('.btn').forEach(el => {
-            if(el.getAttribute('data-rucharcode')) {
-                el.innerHTML = el.innerHTML.toLocaleUpperCase();
-            }
-        });
-        return upperCase = true;
-    };
-
-    if(upperCase) {
-        document.querySelectorAll('.btn').forEach(el => {
-            if(el.getAttribute('data-rucharcode')) {
-                el.innerHTML = el.innerHTML.toLocaleLowerCase();;
-            }
-        });
-        return upperCase = false;
-    }
-}
-
-keyboard.addEventListener('click', onClick);
-document.addEventListener('keyup', onKeyUp);
-document.addEventListener('keydown', onDuobleKey)
-document.addEventListener('keydown', onShift)
-document.addEventListener('click', onClickShift)
-
+document.addEventListener('mousedown', styleMouseDown);
+document.addEventListener('mousedown', innerTextAreaOnMouseDown);
+document.addEventListener('mousedown', onMouseDownShift);
+document.addEventListener('mousedown', onMouseDownCaps);
+document.addEventListener('mouseup', styleMouseUp);
 
 window.onload = () => {
 
